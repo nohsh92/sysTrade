@@ -1,3 +1,4 @@
 config.py
 *.txt
 tutorial_*
+*.bat
