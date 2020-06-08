@@ -61,9 +61,11 @@ def print_message(msg):
        
     
     #dataAsString = "Time: {} Symbol: {} Price: {} Quantity: {} \n". format(msg['T'], msg['s'], msg['p'], msg['q'])
-    dataAsString = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], msg['p'], msg['q'], bitcoins_exchanged)
+    dataAsString = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], float((msg['p'])[0:7]), msg['q'], bitcoins_exchanged)
     # write_to_file(dataAsString)
     print(dataAsString)
+    
+    # breakpoint()
 
 # This is our callback function. For now, it just prints messages as they come.
 def handle_message(msg):
@@ -73,7 +75,15 @@ def handle_message(msg):
 
     # If the message is  a trade: print time, symbol, price and quantity
     else:
-        rawMessage = "{} {} {} {} {} {} {} {}\n". format(msg['E'], msg['T'], msg['t'], msg['a'], msg['b'], msg['p'], msg['q'], msg['m'])
+        rawMessage = "{} {} {} {} {} {} {} {}\n". format(msg['E'], msg['T'], msg['t'], msg['a'], msg['b'], ((msg['p'])[0:7]), msg['q'], msg['m'])
+        
+        # [NOT USED}Debugging different types #
+        # floatedMessage = "{} {} {} {} {} {} {} {}\n". format(int(msg['E']), int(msg['T']), int(msg['t']), int(msg['a']), int(msg['b']), float((msg['p'])[0:7]), float(msg['q']), bool(msg['m']))
+        # print(rawMessage)
+        # print(floatedMessage)
+        # breakpoint()
+        #############################
+        
         write_to_file(rawMessage)
         print_message(msg)
     # breakpoint()
