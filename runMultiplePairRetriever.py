@@ -63,11 +63,10 @@ def handle_message(msg):
         if msg['m'] == True:
             event_side = 'SELL'
         else:  
-            event_side = 'BUY '
-           
+            event_side = 'BUY '          
         
         #dataAsString = "Time: {} Symbol: {} Price: {} Quantity: {} \n". format(msg['T'], msg['s'], msg['p'], msg['q'])
-        dataAsString = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], msg['p'], msg['q'], bitcoins_exchanged)
+        dataAsString = "{} - {} - {} - {} - SellerID: {} - BuyerID: {} - Price: {} - Qty: {} - Funds: {}\n". format(timestamp, event_side, msg['t'], msg['s'], msg['a'], msg['b'], msg['p'], msg['q'], bitcoins_exchanged)
         write_to_file(dataAsString)
         print(dataAsString)
     
