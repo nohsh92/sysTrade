@@ -3,3 +3,4 @@ config.py
 tutorial_*
 *.bat
 *.pyc
+/logs
