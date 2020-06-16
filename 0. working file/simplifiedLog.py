@@ -35,7 +35,7 @@ def create_file():
     global logFilename
     dateTimeObj = datetime.now()
     timeStampStr = dateTimeObj.strftime("%y%m%d_%H%M")
-    logFilename = 'BTCUSDTLog' + timeStampStr +'.txt'
+    logFilename = '../BTCUSDTLog' + timeStampStr +'.txt'
     return logFilename
 
 def write_to_file(newTradeData):
