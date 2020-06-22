@@ -67,7 +67,7 @@ def create_file():
     print("creating file: ")
     dateTimeObj = datetime.now()
     timeStampStr = dateTimeObj.strftime("%y%m%d_%H%M")
-    logFilename = 'BTCUSDTLog' + timeStampStr +'.txt'
+    logFilename = './logs/BTCUSDTLog' + timeStampStr +'.txt'
     return logFilename
 
 def write_to_file(newTradeData):
@@ -222,7 +222,7 @@ class App:
 
     def __init__(self, root):
         self.root = root
-        root.title('Logging Handler')
+        root.title('Binance Retriever')
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
         
