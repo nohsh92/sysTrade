@@ -1,24 +1,3 @@
-# class TextHandler(logging.handler):
-    # # This class allows you to log to a Tkinter Text or ScrolledText widget
-    
-    # def __init__(self,text):
-        # # run the regular handler __init__
-        # logging.Handler.__init__(self)
-        # # store a reference to the Text it will log to
-        # self.text = text
-        
-    # def emit(self,record):
-        # msg = self.format(record)
-        
-        # def append():
-            # self.text.configure(state='normal')
-            # self.text.insert(tk.END, msg + '\n')
-            # self.text.configure(state='disabled')
-            # # autoscroll to the bottom
-            # self.text.yview(tk.END)
-        # # This is necessary because we can't modify the Text from other threads
-        # self.text.after(0,append)
-        
         
 import datetime
 import queue
@@ -54,14 +33,6 @@ break_program = False
 conn_key = ''
 
 
-def on_press(key):
-    global break_program
-    print(key)
-    if key == keyboard.Key.end:
-        print('end pressed')
-        end_program()
-        return False
-
 def create_file():
     global logFilename
     print("creating file: ")
@@ -78,6 +49,7 @@ def write_to_file(newTradeData):
     tradeLog.close()
 
 def print_message(msg):
+    global displayMessage
     # breakpoint()
     # calculate total bitcoins exchanged
     bitcoins_exchanged = float(msg['p']) * float(msg['q']) 
@@ -94,14 +66,16 @@ def print_message(msg):
        
     
     #dataAsString = "Time: {} Symbol: {} Price: {} Quantity: {} \n". format(msg['T'], msg['s'], msg['p'], msg['q'])
-    dataAsString = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], float((msg['p'])[0:7]), msg['q'], bitcoins_exchanged)
+    displayMessage = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], ((msg['p'])[0:7]), msg['q'], ((str(bitcoins_exchanged))[0:16]))
     # write_to_file(dataAsString)
-    print(dataAsString)
+    print(displayMessage)
     
     # breakpoint()
 
 # This is our callback function. For now, it just prints messages as they come.
 def handle_message(msg):
+    global displayMessage
+    print_message(msg)
     # If the message is an error, print the error
     if msg['e'] == 'error':
         print(msg['m'])
@@ -109,7 +83,7 @@ def handle_message(msg):
         rawMessageT = "{} {} {} {} {} {} {} {}\n". format(msg['E'], msg['T'], msg['t'], msg['a'], msg['b'], ((msg['p'])[0:7]), msg['q'], msg['m'])
         print(rawMessageT)
         levelT = logging.CRITICAL
-        logger.log(levelT,rawMessageT)
+        logger.log(levelT,displayMessage)
         write_to_file(rawMessageT)
         # print_message(msg)
     # If the message is  a trade: print time, symbol, price and quantity
@@ -117,7 +91,7 @@ def handle_message(msg):
         rawMessageF = "{} {} {} {} {} {} {} {}\n". format(msg['E'], msg['T'], msg['t'], msg['a'], msg['b'], ((msg['p'])[0:7]), msg['q'], msg['m'])
         print(rawMessageF)
         levelF = logging.INFO
-        logger.log(levelF, rawMessageF)
+        logger.log(levelF, displayMessage)
         write_to_file(rawMessageF)
         # print_message(msg)
     # breakpoint()
@@ -217,6 +191,18 @@ class ConsoleBinace:
             else:
                 self.display(record)
         self.frame.after(100, self.poll_log_queue)
+        
+        
+class MenuButtons:
+    def __init__(self,frame):
+        self.frame = frame
+        self.grid()
+        self.createWidgets()
+        
+    def createWidgets(self):
+        self.quitButton = tk.Button(self, text='Quit', command=self.quit)
+        self.quitButton.grid()
+        
 
 class App:
 
@@ -238,9 +224,15 @@ class App:
         binance_frame.rowconfigure(0, weight=1)
         horizontal_pane.add(binance_frame, weight=1)
         
-        self.binanceConsole = ConsoleBinace(binance_frame)
-
+        # add button layout at the bottom
+        # form_frame = ttk.Labelframe(horizontal_pane, text="MyForm")
+        # form_frame.columnconfigure(1, weight=1)
+        # horizontal_pane.add(form_frame, weight=1)
+        
+        
         # Initialize all frames
+        self.binanceConsole = ConsoleBinace(binance_frame)
+        # self.buttonMenu = MenuButtons(form_frame)
         self.binance = BinanceRetriever()
         self.binance.start()
         self.root.protocol('WM_DELETE_WINDOW', self.quit)
@@ -250,6 +242,7 @@ class App:
     def quit(self, *args):
         self.binance.stop()
         self.root.destroy()
+        end_program()
 
 
 def main():
