@@ -6,10 +6,8 @@ from binance.websockets import BinanceSocketManager # Import the Binance Socket 
 from datetime import datetime
 from pynput import keyboard
 
-PUBLIC = 'zYO4K26EluiKCRbgOvmn5cfPXGYNTCU8FSaVkeBJOnzYPVeaq7c2Fm7xmGVycVqM'
-
-SECRET = 'Pggyt3KuoTkykoIoBjAcxagyhAa0pUvz2zD2ljogvoGLMEigNDmwqZvy9qBbbCkR'
-
+from config import PUBLIC, SECRET
+#####
 # Instantiate a Client
 client = Client(api_key=PUBLIC, api_secret=SECRET)
 
