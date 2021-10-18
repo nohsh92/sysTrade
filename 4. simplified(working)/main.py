@@ -44,7 +44,6 @@ def create_file():
 
 def write_to_file(newTradeData):
     global logFilename
-    # print("Writing to file" + logFilename)
     tradeLog = open(logFilename, 'a')
     tradeLog.write(newTradeData)
     tradeLog.close()
@@ -70,6 +69,7 @@ def print_message(msg):
 
 # This is our callback function. For now, it just prints messages as they come.
 def handle_message(msg):
+    global logFilename
     # If the message is an error, print the error
     if msg['e'] == 'error':
         print(msg['m'])
@@ -77,8 +77,14 @@ def handle_message(msg):
     # If the message is  a trade: print time, symbol, price and quantity
     else:
         rawMessage = "{} {} {} {} {} {} {} {}\n". format(msg['E'], msg['T'], msg['t'], msg['a'], msg['b'], ((msg['p'])[0:7]), msg['q'], msg['m'])
+    
+        if(os.path.getsize(logFilename) > 5242880):
+            logFilename = create_file()
+            write_to_file(rawMessage)
+        else:
+            write_to_file(rawMessage)
+
         
-        write_to_file(rawMessage)
         print_message(msg)
     
 def end_program():
