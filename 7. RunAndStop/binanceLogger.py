@@ -6,6 +6,7 @@ import signal
 import time
 import threading
 import tkinter as tk
+import os
 from tkinter.scrolledtext import ScrolledText
 from tkinter import ttk, VERTICAL, HORIZONTAL, N, S, E, W
 
@@ -38,6 +39,8 @@ def create_file():
     print("creating file: ")
     dateTimeObj = datetime.now()
     timeStampStr = dateTimeObj.strftime("%y%m%d_%H%M")
+    if not os.path.exists('./logs'):
+        os.makedirs('./logs')
     logFilename = './logs/BTCUSDTLog' + timeStampStr +'.txt'
     return logFilename
 
@@ -66,7 +69,7 @@ def print_message(msg):
        
     
     #dataAsString = "Time: {} Symbol: {} Price: {} Quantity: {} \n". format(msg['T'], msg['s'], msg['p'], msg['q'])
-    displayMessage = "{} - {} - {} - {} - Price: {} - Qty: {} BTC Qty: {}\n". format(timestamp, event_side, msg['t'], msg['s'], ((msg['p'])[0:7]), msg['q'], ((str(bitcoins_exchanged))[0:16]))
+    displayMessage = "{} - {} - {} - {} - Price: {} - Qty: {} Qty in USD: {}\n". format(timestamp, event_side, msg['t'], msg['s'], ((msg['p'])[0:7]), msg['q'], ((str(bitcoins_exchanged))[0:16]))
     # write_to_file(dataAsString)
     print(displayMessage)
     
@@ -128,7 +131,7 @@ class BinanceRetriever(threading.Thread):
         write_to_file(startMessage)
 
         bm.start()
-        conn_key = bm.start_trade_socket('BTCUSDT', handle_message)
+        conn_key = bm.start_trade_socket(handle_message, 'BTCUSDT')
         bm.join()
         
         # while not self._stop_event.is_set():
