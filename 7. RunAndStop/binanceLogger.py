@@ -12,7 +12,7 @@ from tkinter import ttk, VERTICAL, HORIZONTAL, N, S, E, W
 import sys
 from twisted.internet import reactor
 from binance.client import Client # Import the Binance Client
-from binance.websockets import BinanceSocketManager # Import the Binance Socket Manager
+from binance import ThreadedWebsocketManager # Import the Binance Socket Manager
 from datetime import datetime
 from pynput import keyboard
 from config import PUBLIC, SECRET
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 client = Client(api_key=PUBLIC, api_secret=SECRET)
 
 # Instantiate a BinanceSocketManager, passing in the client that you instantiated
-bm = BinanceSocketManager(client)
+bm = ThreadedWebsocketManager(PUBLIC, SECRET)      
 
 logFilename = ''
 
@@ -126,12 +126,14 @@ class BinanceRetriever(threading.Thread):
         logFilename = create_file()
         startMessage = "Event Time / Trade Time / Trade ID / Seller Order ID / Buyer Order ID / Price / Quantity / Buyer=MarketMaker?\n"
         write_to_file(startMessage)
-        
-        while not self._stop_event.is_set():
-            conn_key = bm.start_trade_socket('BTCUSDT', handle_message)
-            bm.start()
 
-            # run_logger()
+        bm.start()
+        conn_key = bm.start_trade_socket('BTCUSDT', handle_message)
+        bm.join()
+        
+        # while not self._stop_event.is_set():
+            
+        #     # run_logger()
     def stop(self):
         self._stop_event.set()
 
